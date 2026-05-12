@@ -10,6 +10,9 @@ import loginTeachers from "./src/routes/loginTeachers.js"
 import logoutRoutes from "./src/routes/logout.js"
 import studentsRecoverPassword from "./src/routes/studentsRecoveryPassword.js"
 import teachersRecoveryPassword from "./src/routes/teachersRecoveryPassword.js"
+import homeworkRoutes from "./src/routes/homeworks.js"
+import subjectsRoutes from "./src/routes/subjects.js"
+import categoryRoutes from "./src/routes/category.js"
 
 
 
@@ -33,6 +36,12 @@ app.use("/api/registerTeacher", registerTeacherRoutes)
 app.use("/api/teachers", teachersRoute)
 app.use("/api/loginTeachers", loginTeachers)
 app.use("/api/recoveryPasswordTeacher", teachersRecoveryPassword)
+
+app.use("/api/homeworks", homeworkRoutes)
+
+app.use("/api/subjects", subjectsRoutes)
+
+app.use("/api/category", categoryRoutes)
 
 app.use("/api/logout", logoutRoutes)
 

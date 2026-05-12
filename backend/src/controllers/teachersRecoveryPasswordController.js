@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { config } from "../../config.js";
-import teacherModel from "../models/teachers.js";
+import studentModel from "../models/students.js";
 import HTMLRecoveryEmail from "../utils/sendMailRecovery.js";
 
 const recoveryPasswordController = {};
@@ -11,7 +11,7 @@ const recoveryPasswordController = {};
 recoveryPasswordController.requestCode = async (req, res) => {
   try {
     const { email } = req.body;
-    const userFound = await teacherModel.findOne({ email });
+    const userFound = await studentModel.findOne({ email });
 
     if (!userFound) {
       return res.status(404).json({ message: "User not found" });
@@ -19,7 +19,7 @@ recoveryPasswordController.requestCode = async (req, res) => {
     const randomCode = crypto.randomBytes(3).toString("hex");
 
     const token = jsonwebtoken.sign(
-      { email, randomCode, userType: "teacher", verified: false },
+      { email, randomCode, userType: "student", verified: false },
       config.JWT.secret,
       { expiresIn: "15m" },
     );
@@ -99,7 +99,7 @@ recoveryPasswordController.newPassword = async (req, res) => {
 
     const passwordHashed = await bcrypt.hash(newPassword, 10);
 
-    await teacherModel.findOneAndUpdate(
+    await studentModel.findOneAndUpdate(
       { email: decoded.email },
       { password: passwordHashed },
       { new: true },

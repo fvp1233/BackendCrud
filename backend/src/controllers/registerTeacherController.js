@@ -34,6 +34,7 @@ registerTeacherController.register = async (req, res) => {
 
     const token = jsonwebtoken.sign(
       {
+        randomCode,
         name,
         lastName,
         email,
@@ -81,3 +82,49 @@ registerTeacherController.register = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+registerTeacherController.verifyCode = async (req, res) => {
+  try {
+    const { verificationCodeRequest } = req.body;
+
+    const token = req.cookies.registrationCookie;
+
+    const decoded = jsonwebtoken.verify(token, config.JWT.secret);
+
+    const {
+      randomCode: storedCode,
+      name,
+      lastName,
+      email,
+      password,
+      phone,
+      speciality,
+      isActive,
+      isVerified,
+      loginAttemps,
+      timeOut,
+    } = decoded;
+
+    if (verificationCodeRequest !== storedCode) {
+      return res.status(400).json({ message: "Invalid Code" });
+    }
+
+    const newTeacher = teachersModel({
+      name,
+      lastName,
+      email,
+      password,
+      phone,
+      speciality,
+      isActive: true,
+      isVerified: true,
+    });
+    await newTeacher.save();
+    res.clearCookie("registrationCookie")
+    return res.status(200).json({message: "Teacher register"})
+  } catch (error) {
+    console.log("error" + error)
+    return res.status(500).json({meesage: "Internal server error"})
+  }
+};
+export default registerTeacherController
